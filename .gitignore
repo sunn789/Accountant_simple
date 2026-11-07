@@ -1,0 +1,136 @@
+# ==========================================
+# 1. General / OS & IDE Files
+# ==========================================
+.DS_Store
+Thumbs.db
+ehthumbs.db
+*.swp
+*~
+*.log
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea/
+*.sln.iml
+
+# ==========================================
+# 2. .NET / ASP.NET Core (Backend - Api)
+# ==========================================
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build results (bin & obj anywhere in the repo)
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+bld/
+
+# Visual Studio caches and files
+.vs/
+Generated\ Files/
+*.ilk
+*.meta
+*.obj
+*.pch
+*.pdb
+*.pgc
+*.pgd
+*.rsp
+!Directory.Build.rsp
+*.sbr
+*.tlb
+*.tli
+*.tlh
+*.tmp
+*.log
+*.vspscc
+*.vssscc
+
+# NuGet
+*.nupkg
+*.snupkg
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+*.nuget.props
+*.nuget.targets
+
+# App specific
+*.pfx
+*.publishsettings
+orleans.codegen.cs
+*.[Cc]ache
+!?*.[Cc]ache/
+ClientBin/
+UpgradeLog*.XML
+*.binlog
+
+# ==========================================
+# 3. Node.js / React / Vite (Frontend - ui)
+# ==========================================
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Production build outputs
+dist/
+build/
+dist-ssr/
+*.local
+
+# Vite specific
+.vite/
+node_modules/.vite/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Linter / Formatter caches
+.eslintcache
+.stylelintcache
+.oxlintrc.json
+
+# ==========================================
+# 4. Database (SQLite)
+# ==========================================
+# Ignore SQLite database files (they should be created locally)
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# ==========================================
+# 5. Misc
+# ==========================================
+# Docker
+.dockerignore
+
+# MacOS
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+$RECYCLE.BIN/
+[Dd]esktop.ini

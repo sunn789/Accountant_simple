@@ -1,0 +1,1 @@
+tree -I "bin|obj|node_modules|.git|.vscode|.idea|dist|build|.next|*.db|*.db-shm|*.db-wal" -a
