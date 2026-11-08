@@ -1,0 +1,3710 @@
+==================================================
+UI DESIGN CONTEXT
+Project: Invoice Management System
+==================================================
+
+
+==================================================
+FILE: ui/package.json
+==================================================
+{
+  "name": "ui",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "oxlint",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "axios": "^1.21.0",
+    "react": "^19.3.1",
+    "react-date-object": "^2.1.9",
+    "react-dom": "^19.3.1",
+    "react-multi-date-picker": "^4.5.2",
+    "react-router-dom": "^7.18.5",
+    "vazirmatn": "^33.0.3"
+  },
+  "devDependencies": {
+    "@types/node": "^24.19.2",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "oxlint": "^1.90.0",
+    "typescript": "~7.0.2",
+    "vite": "^8.3.6"
+  }
+}
+
+
+==================================================
+FILE: ui/src/App.tsx
+==================================================
+// src/App.tsx
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import Dashboard from './pages/Dashboard';
+import InvoiceList from './pages/InvoiceList';
+import InvoiceDetail from './pages/InvoiceDetail';
+import CreateInvoice from './pages/CreateInvoice';
+import './App.css';
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Navbar />
+      <div className="main-content">
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/invoices" element={<InvoiceList />} />
+          <Route path="/invoices/new" element={<CreateInvoice />} />
+          <Route path="/invoices/:id" element={<InvoiceDetail />} />
+        </Routes>
+      </div>
+    </BrowserRouter>
+  );
+}
+
+export default App;
+
+==================================================
+FILE: ui/src/App.css
+==================================================
+/* src/App.css */
+
+/* =========================================
+   1. تنظیمات پایه و Layout
+   ========================================= */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Vazirmatn', Tahoma, sans-serif;
+  background-color: #f1f5f9; /* رنگ پس‌زمینه ملایم */
+  color: #1e293b;
+}
+
+.main-content {
+  padding: 30px 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.page-container {
+  width: 100%;
+  max-width: 1200px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  padding: 30px;
+}
+
+h1, h2, h3 {
+  color: #0f172a;
+  margin-top: 0;
+}
+
+/* =========================================
+   2. نویگیشن بار (Navbar)
+   ========================================= */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #1e293b;
+  padding: 0 30px;
+  height: 64px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navbar-brand {
+  font-size: 20px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.navbar-links {
+  display: flex;
+  gap: 25px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+}
+
+.navbar-links a {
+  color: #94a3b8;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.navbar-links a:hover,
+.navbar-links a.active {
+  color: #ffffff;
+}
+
+.btn-create-nav {
+  background-color: #3b82f6 !important;
+  padding: 8px 16px !important;
+  border-radius: 6px !important;
+  color: #ffffff !important;
+}
+
+.btn-create-nav:hover {
+  background-color: #2563eb !important;
+}
+
+/* =========================================
+   3. داشبورد (Dashboard)
+   ========================================= */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.stat-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: right;
+}
+
+.stat-card h3 {
+  font-size: 14px;
+  color: #64748b;
+  margin-bottom: 10px;
+}
+
+.stat-card .value {
+  font-size: 28px;
+  font-weight: bold;
+  color: #3b82f6;
+}
+
+/* =========================================
+   4. جدول لیست فاکتورها (InvoiceList)
+   ========================================= */
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.btn-primary {
+  background-color: #10b981;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.btn-primary:hover { background-color: #059669; }
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: right;
+}
+
+.data-table th, .data-table td {
+  border-bottom: 1px solid #e2e8f0;
+  padding: 12px 15px;
+}
+
+.data-table th {
+  background-color: #f8fafc;
+  color: #475569;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.data-table tbody tr {
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.data-table tbody tr:hover {
+  background-color: #f8fafc;
+}
+
+/* =========================================
+   5. فرم فاکتور (Invoice Form)
+   ========================================= */
+.invoice-form {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.form-section {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 20px;
+  background-color: #ffffff;
+}
+
+.form-section legend {
+  font-weight: 600;
+  color: #3b82f6;
+  padding: 0 10px;
+}
+
+.form-row {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 15px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.form-group label {
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #475569;
+  font-weight: 500;
+}
+
+.form-group input, .form-group select {
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 14px;
+  text-align: right;
+}
+
+.form-group input:focus, .form-group select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.form-table th {
+  background-color: #f8fafc;
+  padding: 12px;
+  font-size: 14px;
+  color: #475569;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.form-table td {
+  padding: 10px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.form-table input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  text-align: center;
+  font-family: inherit;
+}
+
+.row-total {
+  font-weight: bold;
+  color: #10b981;
+  text-align: center;
+}
+
+.btn-danger {
+  background-color: #fee2e2;
+  color: #ef4444;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.btn-danger:hover { background-color: #fecaca; }
+
+.form-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f8fafc;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.grand-total strong {
+  font-size: 24px;
+  color: #10b981;
+  margin-right: 10px;
+}
+
+.btn-large {
+  padding: 12px 30px;
+  font-size: 16px;
+}
+
+/* =========================================
+   6. استایل اختصاصی چاپ فاکتور (A4)
+   ========================================= */
+.invoice-print-wrapper {
+  display: flex;
+  justify-content: center;
+  background-color: #e2e8f0;
+  padding: 30px;
+}
+
+.invoice-container {
+  background-color: white;
+  width: 210mm;
+  min-height: 297mm;
+  padding: 15mm;
+  box-sizing: border-box;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.invoice-container table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 15px;
+  font-size: 13px;
+}
+
+.invoice-container th, .invoice-container td {
+  border: 1px solid #000;
+  padding: 6px;
+  text-align: right;
+}
+
+.invoice-container .section-title {
+  text-align: center;
+  font-weight: bold;
+  background-color: #f5f5f5;
+}
+
+@media print {
+  body { background-color: white; }
+  .navbar, .no-print { display: none !important; }
+  .main-content { padding: 0; }
+  .invoice-print-wrapper { padding: 0; background: none; }
+  .invoice-container {
+    box-shadow: none;
+    width: 100%;
+    min-height: auto;
+    padding: 0;
+  }
+}
+/* استایل نوار جستجو */
+
+
+
+.search-group label {
+  font-size: 13px;
+  color: #475569;
+}
+
+.search-group input {
+  padding: 8px;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  font-family: inherit;
+}
+
+/* استایل صفحه‌بندی */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.btn-page {
+  background-color: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.btn-page:hover:not(:disabled) {
+  background-color: #e2e8f0;
+}
+
+.btn-page:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+/* استایل اینپوت تقویم */
+
+
+.date-picker-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+.search-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.date-picker-input {
+  width: 100%;
+  min-width: 180px;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: #fff;
+  color: #1f2937;
+  font-family: inherit;
+  font-size: 14px;
+  direction: rtl;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.date-picker-input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+}
+
+
+/* =========================================
+   Invoice List - Modern Search Filter
+   ========================================= */
+
+.search-bar {
+  display: grid;
+  grid-template-columns: minmax(200px, 1fr) minmax(200px, 1fr) auto auto;
+  align-items: end;
+  gap: 16px;
+  padding: 22px;
+  margin-bottom: 28px;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  box-shadow: 0 3px 12px rgba(15, 23, 42, 0.04);
+  direction: rtl;
+}
+
+.search-group {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  min-width: 0;
+}
+
+.search-group label {
+  color: #334155;
+  font-size: 13px;
+  font-weight: 600;
+  padding-right: 3px;
+}
+
+/* DatePicker wrapper */
+.search-group .rmdp-container {
+  display: block;
+  width: 100%;
+}
+
+/* DatePicker input */
+.date-picker-input {
+  display: block;
+  box-sizing: border-box;
+  width: 100% !important;
+  height: 44px;
+  padding: 0 14px !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 9px !important;
+  background: #ffffff !important;
+  color: #1e293b !important;
+  font-family: inherit !important;
+  font-size: 14px !important;
+  font-weight: 500;
+  text-align: right;
+  direction: rtl;
+  outline: none;
+  transition: all 0.25s ease;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.date-picker-input::placeholder {
+  color: #94a3b8;
+  font-weight: 400;
+}
+
+.date-picker-input:hover {
+  border-color: #94a3b8 !important;
+  background: #ffffff !important;
+}
+
+.date-picker-input:focus {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.13);
+}
+
+/* Search button */
+.btn-search,
+.btn-clear {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  height: 44px;
+  padding: 0 22px;
+  border-radius: 9px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+/* Main search */
+.btn-search {
+  color: #ffffff;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  border: 1px solid #1d4ed8;
+  box-shadow: 0 3px 8px rgba(37, 99, 235, 0.2);
+}
+
+.btn-search:hover {
+  background: linear-gradient(135deg, #1d4ed8, #1e40af);
+  box-shadow: 0 5px 14px rgba(37, 99, 235, 0.3);
+  transform: translateY(-2px);
+}
+
+.btn-search:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 5px rgba(37, 99, 235, 0.2);
+}
+
+/* Clear filters */
+.btn-clear {
+  color: #475569;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+}
+
+.btn-clear:hover {
+  color: #dc2626;
+  background: #fff1f2;
+  border-color: #fda4af;
+  box-shadow: 0 3px 9px rgba(220, 38, 38, 0.08);
+  transform: translateY(-2px);
+}
+
+.btn-clear:active {
+  transform: translateY(0);
+}
+
+/* DatePicker calendar */
+.rmdp-wrapper {
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.15) !important;
+  overflow: hidden;
+}
+
+.rmdp-header {
+  font-weight: 600;
+}
+
+.rmdp-day.rmdp-selected span {
+  background-color: #2563eb !important;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
+}
+
+.rmdp-day:not(.rmdp-disabled):not(.rmdp-day-hidden) span:hover {
+  background-color: #dbeafe !important;
+  color: #1d4ed8 !important;
+}
+
+/* Responsive */
+@media (max-width: 850px) {
+  .search-bar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .btn-search,
+  .btn-clear {
+    width: 100%;
+  }
+}
+
+@media (max-width: 520px) {
+  .search-bar {
+    grid-template-columns: 1fr;
+    padding: 16px;
+    gap: 14px;
+  }
+
+  .search-group {
+    width: 100%;
+  }
+
+  .btn-search,
+  .btn-clear {
+    width: 100%;
+  }
+}
+/* =========================================
+   Invoice List - Dashboard
+   ========================================= */
+
+.invoice-list-page {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.invoice-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.invoice-list-header h2 {
+  margin: 0;
+}
+
+.page-subtitle {
+  margin: 7px 0 0;
+  color: #64748b;
+  font-size: 13px;
+}
+
+/* Today summary */
+
+.today-summary,
+.invoice-filter-section,
+.invoice-table-section {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 3px 12px rgba(15, 23, 42, 0.035);
+}
+
+.summary-heading,
+.filter-section-heading,
+.table-section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.summary-heading h3,
+.filter-section-heading h3,
+.table-section-heading h3 {
+  margin: 0;
+  color: #1e293b;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.summary-heading p,
+.filter-section-heading p,
+.table-section-heading p {
+  margin: 6px 0 0;
+  color: #64748b;
+  font-size: 12px;
+}
+
+.summary-date-icon {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: #eff6ff;
+  color: #2563eb;
+  font-size: 23px;
+}
+
+.summary-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.summary-card {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 18px;
+  border: 1px solid #e8edf4;
+  border-radius: 12px;
+  background: #fafcff;
+  min-width: 0;
+}
+
+.summary-card-icon {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  font-size: 23px;
+}
+
+.invoice-count-icon {
+  color: #2563eb;
+  background: #dbeafe;
+}
+
+.invoice-amount-icon {
+  color: #059669;
+  background: #d1fae5;
+}
+
+.summary-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.summary-label {
+  color: #64748b;
+  font-size: 12px;
+}
+
+.summary-card-content strong {
+  color: #0f172a;
+  font-size: clamp(18px, 2vw, 25px);
+  font-weight: 800;
+  overflow-wrap: anywhere;
+  direction: ltr;
+  text-align: right;
+}
+
+.summary-card-content small {
+  color: #94a3b8;
+  font-size: 11px;
+}
+
+.summary-loading,
+.summary-error,
+.summary-empty {
+  padding: 13px;
+  border-radius: 9px;
+  background: #f8fafc;
+  color: #64748b;
+  text-align: center;
+  font-size: 13px;
+}
+
+.summary-error {
+  color: #dc2626;
+  background: #fef2f2;
+}
+
+.summary-empty {
+  margin-top: 14px;
+  color: #64748b;
+}
+
+/* Filters */
+
+.filter-section-heading {
+  margin-bottom: 20px;
+}
+
+.active-filter-label {
+  padding: 5px 10px;
+  border-radius: 20px;
+  color: #2563eb;
+  background: #eff6ff;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.basic-filters {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.search-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.search-group label {
+  color: #475569;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.date-picker-input,
+.filter-text-input {
+  width: 100%;
+  min-height: 43px;
+  box-sizing: border-box;
+  border: 1px solid #dbe1e8;
+  border-radius: 8px;
+  padding: 9px 12px;
+  background: #fff;
+  color: #1e293b;
+  font-family: inherit;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.date-picker-input:focus,
+.filter-text-input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+}
+
+.advanced-filter-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 17px;
+  padding: 12px 0;
+  border: 0;
+  border-top: 1px solid #edf0f4;
+  background: transparent;
+  color: #2563eb;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: right;
+  cursor: pointer;
+}
+
+.advanced-filter-toggle:hover {
+  color: #1d4ed8;
+}
+
+.advanced-filter-toggle-icon {
+  width: 21px;
+  height: 21px;
+  display: grid;
+  place-items: center;
+  border-radius: 6px;
+  background: #eff6ff;
+  font-size: 17px;
+}
+
+.advanced-filter-description {
+  color: #94a3b8;
+  font-size: 11px;
+  font-weight: 400;
+}
+
+.advanced-chevron {
+  margin-right: auto;
+  transition: transform 0.2s;
+}
+
+.advanced-chevron.is-open {
+  transform: rotate(180deg);
+}
+
+.advanced-filters {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 15px;
+  padding: 17px;
+  margin-bottom: 16px;
+  border: 1px solid #e8edf4;
+  border-radius: 10px;
+  background: #f8fafc;
+  animation: filterExpand 0.2s ease;
+}
+
+@keyframes filterExpand {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.filter-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.filter-actions .btn-search,
+.filter-actions .btn-clear {
+  min-height: 42px;
+  padding: 9px 20px;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, transform 0.2s;
+}
+
+.filter-actions .btn-search {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 1px solid #2563eb;
+  background: #2563eb;
+  color: #fff;
+}
+
+.filter-actions .btn-search:hover {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+.filter-actions .btn-clear {
+  border: 1px solid #dbe1e8;
+  background: #fff;
+  color: #475569;
+}
+
+.filter-actions .btn-clear:hover {
+  border-color: #94a3b8;
+  background: #f8fafc;
+}
+
+/* Table */
+
+.table-section-heading {
+  margin-bottom: 15px;
+}
+
+.invoice-table-row {
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.invoice-table-row:hover {
+  background: #f8fafc;
+}
+
+.invoice-amount-cell {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.payment-badge {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.payment-cash {
+  color: #047857;
+  background: #d1fae5;
+}
+
+.payment-noncash {
+  color: #1d4ed8;
+  background: #dbeafe;
+}
+
+.invoice-view-button {
+  border: 0;
+  padding: 5px 10px;
+  border-radius: 6px;
+  background: transparent;
+  color: #2563eb;
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.invoice-view-button:hover {
+  background: #eff6ff;
+}
+
+.empty-table-message {
+  padding: 35px !important;
+  text-align: center;
+  color: #64748b;
+}
+
+.invoice-loading {
+  padding: 35px;
+  text-align: center;
+  color: #64748b;
+}
+
+.invoice-error-message {
+  padding: 12px 15px;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  background: #fef2f2;
+  color: #b91c1c;
+  font-size: 13px;
+}
+
+.invoice-pagination {
+  margin-top: 18px;
+}
+
+/* Responsive */
+
+@media (max-width: 768px) {
+  .invoice-list-page {
+    gap: 15px;
+  }
+
+  .invoice-list-header {
+    align-items: flex-start;
+  }
+
+  .invoice-list-header .btn-primary {
+    white-space: nowrap;
+    font-size: 12px;
+  }
+
+  .summary-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .advanced-filters {
+    grid-template-columns: 1fr;
+  }
+
+  .basic-filters {
+    grid-template-columns: 1fr;
+  }
+
+  .today-summary,
+  .invoice-filter-section,
+  .invoice-table-section {
+    padding: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .invoice-list-header {
+    flex-direction: column;
+  }
+
+  .invoice-list-header .btn-primary {
+    width: 100%;
+  }
+
+  .filter-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-actions button {
+    width: 100%;
+  }
+
+  .advanced-filter-description {
+    display: none;
+  }
+}
+/* =========================================
+   Invoice Detail Page
+========================================= */
+
+.invoice-detail-page {
+  width: 100%;
+  min-height: 100vh;
+  padding: 24px;
+  background: #f4f6f9;
+  direction: rtl;
+}
+
+.invoice-detail-header {
+  max-width: 1200px;
+  margin: 0 auto 24px;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  background: #fff;
+  border: 1px solid #e8ebf0;
+  border-radius: 12px;
+  box-shadow: 0 3px 12px rgba(20, 35, 60, 0.04);
+}
+
+.invoice-detail-heading {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.invoice-detail-heading h1 {
+  margin: 0 0 6px;
+  color: #263449;
+  font-size: 21px;
+  font-weight: 700;
+}
+
+.invoice-detail-heading p {
+  margin: 0;
+  color: #7b8493;
+  font-size: 13px;
+}
+
+.invoice-detail-heading strong {
+  color: #34445d;
+}
+
+.invoice-detail-back,
+.invoice-detail-print {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 9px 16px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.invoice-detail-back {
+  color: #526176;
+  background: #f1f3f6;
+  border-color: #e5e9ef;
+}
+
+.invoice-detail-back:hover {
+  color: #263d5b;
+  background: #e7ecf3;
+}
+
+.invoice-detail-print {
+  color: #fff;
+  background: #2864b4;
+}
+
+.invoice-detail-print:hover {
+  background: #1d508f;
+  box-shadow: 0 4px 12px rgba(40, 100, 180, 0.2);
+  transform: translateY(-1px);
+}
+
+.invoice-detail-document {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+  background: #fff;
+  border: 1px solid #e8ebf0;
+  border-radius: 12px;
+  box-shadow: 0 4px 18px rgba(20, 35, 60, 0.05);
+}
+
+/* Loading and error states */
+
+.invoice-detail-state {
+  min-height: 65vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  color: #687588;
+  font-size: 14px;
+}
+
+.invoice-detail-spinner {
+  width: 38px;
+  height: 38px;
+  border: 3px solid #e4eaf2;
+  border-top-color: #2864b4;
+  border-radius: 50%;
+  animation: invoiceDetailSpin 0.8s linear infinite;
+}
+
+@keyframes invoiceDetailSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.invoice-detail-error {
+  width: min(440px, calc(100% - 32px));
+  padding: 36px 28px;
+  text-align: center;
+  background: #fff;
+  border: 1px solid #f0dede;
+  border-radius: 12px;
+  box-shadow: 0 4px 18px rgba(20, 35, 60, 0.05);
+}
+
+.invoice-detail-error-icon {
+  width: 44px;
+  height: 44px;
+  margin: 0 auto 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #c34b4b;
+  background: #fff0f0;
+  border-radius: 50%;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.invoice-detail-error h3 {
+  margin: 0 0 10px;
+  color: #34445d;
+  font-size: 17px;
+}
+
+.invoice-detail-error p {
+  margin: 0 0 22px;
+  color: #7b8493;
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+/* Responsive */
+
+@media (max-width: 768px) {
+  .invoice-detail-page {
+    padding: 12px;
+  }
+
+  .invoice-detail-header {
+    padding: 16px;
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .invoice-detail-heading {
+    align-items: flex-start;
+    flex-direction: column-reverse;
+    gap: 14px;
+  }
+
+  .invoice-detail-print {
+    width: 100%;
+  }
+
+  .invoice-detail-document {
+    padding: 12px;
+  }
+}
+
+/* Print */
+
+@media print {
+  @page {
+    size: A4;
+    margin: 12mm;
+  }
+
+  body {
+    background: #fff !important;
+  }
+
+  .invoice-detail-page {
+    min-height: auto;
+    padding: 0;
+    background: #fff !important;
+  }
+
+  .no-print,
+  .invoice-detail-header {
+    display: none !important;
+  }
+
+  .invoice-detail-document {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+  }
+}
+
+==================================================
+FILE: ui/src/index.css
+==================================================
+:root {
+  --text: #6b6375;
+  --text-h: #08060d;
+  --bg: #fff;
+  --border: #e5e4e7;
+  --code-bg: #f4f3ec;
+  --accent: #aa3bff;
+  --accent-bg: rgba(170, 59, 255, 0.1);
+  --accent-border: rgba(170, 59, 255, 0.5);
+  --social-bg: rgba(244, 243, 236, 0.5);
+  --shadow:
+    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+
+  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --mono: ui-monospace, Consolas, monospace;
+
+  font: 18px/145% var(--sans);
+  letter-spacing: 0.18px;
+  color-scheme: light dark;
+  color: var(--text);
+  background: var(--bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  @media (max-width: 1024px) {
+    font-size: 16px;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text: #9ca3af;
+    --text-h: #f3f4f6;
+    --bg: #16171d;
+    --border: #2e303a;
+    --code-bg: #1f2028;
+    --accent: #c084fc;
+    --accent-bg: rgba(192, 132, 252, 0.15);
+    --accent-border: rgba(192, 132, 252, 0.5);
+    --social-bg: rgba(47, 48, 58, 0.5);
+    --shadow:
+      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+  }
+
+  #social .button-icon {
+    filter: invert(1) brightness(2);
+  }
+}
+
+#root {
+  width: 1126px;
+  max-width: 100%;
+  margin: 0 auto;
+  text-align: center;
+  border-inline: 1px solid var(--border);
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+h1,
+h2 {
+  font-family: var(--heading);
+  font-weight: 500;
+  color: var(--text-h);
+}
+
+h1 {
+  font-size: 56px;
+  letter-spacing: -1.68px;
+  margin: 32px 0;
+  @media (max-width: 1024px) {
+    font-size: 36px;
+    margin: 20px 0;
+  }
+}
+h2 {
+  font-size: 24px;
+  line-height: 118%;
+  letter-spacing: -0.24px;
+  margin: 0 0 8px;
+  @media (max-width: 1024px) {
+    font-size: 20px;
+  }
+}
+p {
+  margin: 0;
+}
+
+code,
+.counter {
+  font-family: var(--mono);
+  display: inline-flex;
+  border-radius: 4px;
+  color: var(--text-h);
+}
+
+code {
+  font-size: 15px;
+  line-height: 135%;
+  padding: 4px 8px;
+  background: var(--code-bg);
+}
+
+
+
+==================================================
+FILE: ui/src/main.tsx
+==================================================
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import 'vazirmatn/Vazirmatn-font-face.css';
+import './index.css'
+import App from './App.tsx'
+
+
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+)
+
+
+==================================================
+FILE: ui/src/services/api.ts
+==================================================
+// src/services/api.ts
+import axios from 'axios';
+import type { Invoice } from '../types/invoice';
+
+const api = axios.create({
+  baseURL: '/api', 
+});
+
+export const saveInvoice = async (invoice: Invoice) => {
+  // آدرس نهایی می‌شود /api/Invoices
+  const response = await api.post('/Invoices', invoice); 
+  return response.data;
+};
+
+export interface PagedResult {
+  totalCount: number;
+  pageNumber: number;
+  pageSize: number;
+  items: Invoice[];
+}
+
+export interface TodaySummary {
+  date: string;
+  jalaliDate: string;
+  invoiceCount: number;
+  totalAmount: number;
+}
+
+export const getTodaySummary = async (): Promise<TodaySummary> => {
+  const response = await api.get('/Invoices/today-summary');
+  return response.data;
+};
+
+export const getInvoices = async (
+  page: number = 1,
+  pageSize: number = 10,
+  startDate?: string,
+  endDate?: string,
+  buyerName?: string,
+  minAmount?: number,
+  maxAmount?: number
+): Promise<PagedResult> => {
+  const params: Record<string, string | number> = {
+    page,
+    pageSize,
+  };
+
+  if (startDate) params.startDate = startDate;
+  if (endDate) params.endDate = endDate;
+  if (buyerName) params.buyerName = buyerName;
+  if (minAmount !== undefined) params.minAmount = minAmount;
+  if (maxAmount !== undefined) params.maxAmount = maxAmount;
+
+  const response = await api.get('/Invoices', { params });
+
+  return response.data;
+};
+
+
+export interface DashboardStats {
+  totalInvoices: number;
+  totalRevenue: number;
+  todayInvoices: number;
+  todayRevenue: number;
+  totalCustomers: number;
+}
+
+export const getDashboardStats = async (): Promise<DashboardStats> => {
+  const response = await api.get('/Dashboard/stats');
+  return response.data;
+};
+
+
+export const getInvoiceById = async (id: number) => {
+  const response = await api.get(`/Invoices/${id}`);
+  return response.data;
+};
+
+
+==================================================
+FILE: ui/src/types/invoice.ts
+==================================================
+// src/types/invoice.ts
+
+export interface Party {
+  id?: number;
+  name: string;
+  economicCode: string;
+  registrationNumber: string;
+  nationalId: string;
+  province: string;
+  city: string;
+  address: string;
+  postalCode: string;
+  phone: string;
+  mobile: string;
+}
+
+export interface InvoiceItem {
+  id?: number;
+  description: string;
+  quantity: number;
+  unitPrice: number;
+  discount: number;
+  tax: number;
+  totalPrice?: number;
+}
+
+export interface Invoice {
+  id?: number;
+  invoiceNumber: string;
+  date: string;
+  seller: Party;
+  buyer: Party;
+  items: InvoiceItem[];
+  totalAmount?: number;
+  paymentType: string; // 'cash' | 'credit'
+  notes: string;
+}
+
+==================================================
+FILE: ui/src/components/Navbar.tsx
+==================================================
+import { NavLink } from 'react-router-dom';
+
+const Navbar = () => {
+  return (
+    <nav className="navbar">
+      <div className="navbar-brand">سیستم فاکتور من</div>
+      <ul className="navbar-links">
+        <li><NavLink to="/" className={({ isActive }) => isActive ? 'active' : ''}>داشبورد</NavLink></li>
+        <li><NavLink to="/invoices" className={({ isActive }) => isActive ? 'active' : ''}>لیست فاکتورها</NavLink></li>
+        <li><NavLink to="/invoices/new" className="btn-create-nav">+ فاکتور جدید</NavLink></li>
+      </ul>
+    </nav>
+  );
+};
+
+export default Navbar;
+
+==================================================
+FILE: ui/src/components/Invoice/InvoiceForm.tsx
+==================================================
+// src/components/Invoice/InvoiceForm.tsx
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import type { Invoice, InvoiceItem, Party } from '../../types/invoice';
+import { saveInvoice } from '../../services/api';
+
+const InvoiceForm = () => {
+  const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // ۱. استیت اطلاعات پایه
+  const [invoiceNumber, setInvoiceNumber] = useState('');
+ const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+  const [paymentType, setPaymentType] = useState('cash');
+  const [notes, setNotes] = useState('');
+
+  // ۲. استیت اطلاعات خریدار
+  const [buyer, setBuyer] = useState<Party>({
+    name: '', economicCode: '', registrationNumber: '', nationalId: '',
+    province: '', city: '', address: '', postalCode: '', phone: '', mobile: ''
+  });
+
+  // ۳. استیت اقلام فاکتور
+  const [items, setItems] = useState<InvoiceItem[]>([
+    { description: '', quantity: 1, unitPrice: 0, discount: 0, tax: 0 }
+  ]);
+
+  // هندلر تغییر فیلدهای خریدار
+  const handleBuyerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setBuyer(prev => ({ ...prev, [name]: value }));
+  };
+
+  // هندلر تغییر فیلدهای آیتم‌ها
+  const handleItemChange = (index: number, field: keyof InvoiceItem, value: string | number) => {
+    const newItems = [...items];
+    newItems[index] = { ...newItems[index], [field]: value };
+    setItems(newItems);
+  };
+
+  // افزودن ردیف جدید
+  const addItem = () => {
+    setItems([...items, { description: '', quantity: 1, unitPrice: 0, discount: 0, tax: 0 }]);
+  };
+
+  // حذف ردیف
+  const removeItem = (index: number) => {
+    if (items.length > 1) {
+      setItems(items.filter((_, i) => i !== index));
+    }
+  };
+
+  // محاسبه جمع کل یک ردیف
+  const calculateRowTotal = (item: InvoiceItem) => {
+    return (item.quantity * item.unitPrice) - item.discount + item.tax;
+  };
+
+  // محاسبه جمع کل فاکتور
+  const calculateGrandTotal = () => {
+    return items.reduce((total, item) => total + calculateRowTotal(item), 0);
+  };
+
+  // ارسال به بک‌اند
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    // فروشنده فیک (در نسخه واقعی باید از تنظیمات یا دیتابیس خوانده شود)
+    const seller: Party = {
+      name: 'شرکت من', economicCode: '123456789', registrationNumber: '111',
+      nationalId: '1234567890', province: 'تهران', city: 'تهران',
+      address: 'آدرس شرکت', postalCode: '1234567890', phone: '021-00000000', mobile: '09120000000'
+    };
+
+    const newInvoice: Invoice = {
+      invoiceNumber: invoiceNumber || `INV-${Date.now()}`,
+      date,
+      seller,
+      buyer,
+      items: items.map(item => ({ ...item, totalPrice: calculateRowTotal(item) })),
+      totalAmount: calculateGrandTotal(),
+      paymentType,
+      notes
+    };
+
+    try {
+      await saveInvoice(newInvoice);
+      alert('فاکتور با موفقیت ذخیره شد!');
+      navigate('/invoices'); // هدایت به لیست فاکتورها
+    } catch (error) {
+      console.error(error);
+      alert('خطا در ذخیره فاکتور. لطفا دوباره تلاش کنید.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <form className="invoice-form" onSubmit={handleSubmit} dir="rtl">
+      
+      {/* بخش اطلاعات پایه */}
+      <div className="form-row">
+        <div className="form-group">
+          <label>شماره فاکتور</label>
+          <input type="text" value={invoiceNumber} onChange={(e) => setInvoiceNumber(e.target.value)} placeholder="مثلا 1001" />
+        </div>
+        <div className="form-group">
+          <label>تاریخ</label>
+          <input type="text" value={date} onChange={(e) => setDate(e.target.value)} />
+        </div>
+      </div>
+
+      {/* بخش اطلاعات خریدار */}
+      <fieldset className="form-section">
+        <legend>مشخصات خریدار</legend>
+        <div className="form-row">
+          <div className="form-group">
+            <label>نام خریدار *</label>
+            <input required type="text" name="name" value={buyer.name} onChange={handleBuyerChange} />
+          </div>
+          <div className="form-group">
+            <label>شماره اقتصادی</label>
+            <input type="text" name="economicCode" value={buyer.economicCode} onChange={handleBuyerChange} />
+          </div>
+          <div className="form-group">
+            <label>شناسه ملی</label>
+            <input type="text" name="nationalId" value={buyer.nationalId} onChange={handleBuyerChange} />
+          </div>
+        </div>
+        <div className="form-row">
+          <div className="form-group">
+            <label>استان</label>
+            <input type="text" name="province" value={buyer.province} onChange={handleBuyerChange} />
+          </div>
+          <div className="form-group">
+            <label>شهر</label>
+            <input type="text" name="city" value={buyer.city} onChange={handleBuyerChange} />
+          </div>
+          <div className="form-group">
+            <label>تلفن</label>
+            <input type="text" name="phone" value={buyer.phone} onChange={handleBuyerChange} />
+          </div>
+        </div>
+        <div className="form-group">
+          <label>نشانی کامل</label>
+          <input type="text" name="address" value={buyer.address} onChange={handleBuyerChange} />
+        </div>
+      </fieldset>
+
+      {/* بخش اقلام فاکتور */}
+      <fieldset className="form-section">
+        <legend>اقلام فاکتور</legend>
+        <table className="form-table">
+          <thead>
+            <tr>
+              <th>شرح کالا/خدمات</th>
+              <th style={{ width: '80px' }}>تعداد</th>
+              <th style={{ width: '120px' }}>مبلغ واحد</th>
+              <th style={{ width: '100px' }}>تخفیف</th>
+              <th style={{ width: '100px' }}>مالیات</th>
+              <th style={{ width: '120px' }}>جمع ردیف</th>
+              <th style={{ width: '50px' }}>حذف</th>
+            </tr>
+          </thead>
+          <tbody>
+            {items.map((item, index) => (
+              <tr key={index}>
+                <td><input type="text" value={item.description} onChange={(e) => handleItemChange(index, 'description', e.target.value)} required /></td>
+                <td><input type="number" min="1" value={item.quantity} onChange={(e) => handleItemChange(index, 'quantity', Number(e.target.value))} required /></td>
+                <td><input type="number" min="0" value={item.unitPrice} onChange={(e) => handleItemChange(index, 'unitPrice', Number(e.target.value))} required /></td>
+                <td><input type="number" min="0" value={item.discount} onChange={(e) => handleItemChange(index, 'discount', Number(e.target.value))} /></td>
+                <td><input type="number" min="0" value={item.tax} onChange={(e) => handleItemChange(index, 'tax', Number(e.target.value))} /></td>
+                <td className="row-total">{calculateRowTotal(item).toLocaleString('fa-IR')}</td>
+                <td>
+                  <button type="button" className="btn-danger" onClick={() => removeItem(index)}>✕</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <button type="button" className="btn-secondary" onClick={addItem} style={{ marginTop: '10px' }}>
+          + افزودن ردیف
+        </button>
+      </fieldset>
+
+      {/* بخش پرداخت و توضیحات */}
+      <div className="form-row" style={{ marginTop: '20px' }}>
+        <div className="form-group">
+          <label>نحوه پرداخت</label>
+          <select value={paymentType} onChange={(e) => setPaymentType(e.target.value)}>
+            <option value="cash">نقدی</option>
+            <option value="credit">غیر نقدی</option>
+          </select>
+        </div>
+        <div className="form-group" style={{ flex: 2 }}>
+          <label>توضیحات</label>
+          <input type="text" value={notes} onChange={(e) => setNotes(e.target.value)} />
+        </div>
+      </div>
+
+      {/* جمع کل و ثبت */}
+      <div className="form-footer">
+        <div className="grand-total">
+          جمع کل قابل پرداخت: <strong>{calculateGrandTotal().toLocaleString('fa-IR')} ریال</strong>
+        </div>
+        <button type="submit" className="btn-primary btn-large" disabled={isSubmitting}>
+          {isSubmitting ? 'در حال ذخیره...' : 'ثبت و ذخیره فاکتور'}
+        </button>
+      </div>
+    </form>
+  );
+};
+
+export default InvoiceForm;
+
+==================================================
+FILE: ui/src/components/Invoice/InvoiceTemplate.tsx
+==================================================
+// src/components/Invoice/InvoiceTemplate.tsx
+import React from 'react';
+import type { Invoice } from '../../types/invoice';
+
+interface Props {
+  invoice: Invoice;
+}
+
+const InvoiceTemplate: React.FC<Props> = ({ invoice }) => {
+  // تابع برای فرمت اعداد با جداکننده هزارگان
+  const formatNumber = (num: number) => num.toLocaleString('fa-IR');
+
+  return (
+    <div className="invoice-container" dir="rtl">
+      <div className="header">
+        <h2>صورتحساب فروش کالا و خدمات</h2>
+        <div className="date">تاریخ: {invoice.date}</div>
+        <div className="invoice-number">شماره: {invoice.invoiceNumber}</div>
+      </div>
+
+      {/* مشخصات فروشنده */}
+      <table>
+        <thead>
+          <tr>
+            <th colSpan={4} className="section-title">مشخصات فروشنده</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>نام شخص حقیقی/حقوقی: {invoice.seller.name}</td>
+            <td>شماره اقتصادی: {invoice.seller.economicCode}</td>
+            <td>شماره ثبت: {invoice.seller.registrationNumber}</td>
+            <td>شناسه ملی: {invoice.seller.nationalId}</td>
+          </tr>
+          <tr>
+            <td>استان: {invoice.seller.province}</td>
+            <td>شهر: {invoice.seller.city}</td>
+            <td colSpan={2}>نشانی کامل: {invoice.seller.address}</td>
+          </tr>
+          <tr>
+            <td>کد پستی: {invoice.seller.postalCode}</td>
+            <td>تلفن: {invoice.seller.phone}</td>
+            <td colSpan={2}>همراه: {invoice.seller.mobile}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      {/* مشخصات خریدار */}
+      <table>
+        <thead>
+          <tr>
+            <th colSpan={4} className="section-title">مشخصات خریدار</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>نام شخص حقیقی/حقوقی: {invoice.buyer.name}</td>
+            <td>شماره اقتصادی: {invoice.buyer.economicCode}</td>
+            <td>شماره ثبت: {invoice.buyer.registrationNumber}</td>
+            <td>شناسه ملی: {invoice.buyer.nationalId}</td>
+          </tr>
+          <tr>
+            <td>استان: {invoice.buyer.province}</td>
+            <td>شهر: {invoice.buyer.city}</td>
+            <td colSpan={2}>نشانی کامل: {invoice.buyer.address}</td>
+          </tr>
+          <tr>
+            <td>کد پستی: {invoice.buyer.postalCode}</td>
+            <td>تلفن: {invoice.buyer.phone}</td>
+            <td colSpan={2}>همراه: {invoice.buyer.mobile}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      {/* جدول کالاها */}
+      <table className="items-table">
+        <thead>
+          <tr>
+            <th>ردیف</th>
+            <th>شرح کالا یا خدمات</th>
+            <th>تعداد</th>
+            <th>مبلغ واحد</th>
+            <th>تخفیف</th>
+            <th>مالیات</th>
+            <th>جمع کل</th>
+          </tr>
+        </thead>
+        <tbody>
+          {invoice.items.map((item, index) => {
+            const total = (item.quantity * item.unitPrice) - item.discount + item.tax;
+            return (
+              <tr key={index}>
+                <td>{index + 1}</td>
+                <td>{item.description}</td>
+                <td>{item.quantity}</td>
+                <td>{formatNumber(item.unitPrice)}</td>
+                <td>{formatNumber(item.discount)}</td>
+                <td>{formatNumber(item.tax)}</td>
+                <td>{formatNumber(total)}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colSpan={6} className="total-label">جمع کل قابل پرداخت:</td>
+            <td className="total-amount">{formatNumber(invoice.totalAmount || 0)}</td>
+          </tr>
+        </tfoot>
+      </table>
+
+      {/* فوتر و امضاها */}
+      <table className="footer-table">
+        <tbody>
+          <tr>
+            <td colSpan={2} className="payment-type">
+              شرایط و نحوه فروش: 
+              <span className="checkbox-item">
+                <input type="checkbox" checked={invoice.paymentType === 'cash'} readOnly /> نقدی
+              </span>
+              <span className="checkbox-item">
+                <input type="checkbox" checked={invoice.paymentType === 'credit'} readOnly /> غیر نقدی
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td colSpan={2}>توضیحات: {invoice.notes}</td>
+          </tr>
+          <tr>
+            <td className="signature">مهر و امضاء فروشنده:</td>
+            <td className="signature">مهر و امضاء خریدار:</td>
+          </tr>
+        </tbody>
+      </table>
+
+      {/* دکمه چاپ (در چاپ دیده نمی‌شود) */}
+      <div className="no-print print-button-container">
+        <button onClick={() => window.print()} className="btn-print">
+          🖨️ چاپ فاکتور
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default InvoiceTemplate;
+
+==================================================
+FILE: ui/src/pages/Home.tsx
+==================================================
+
+
+==================================================
+FILE: ui/src/pages/Dashboard.tsx
+==================================================
+// src/pages/Dashboard.tsx
+import { useEffect, useState } from 'react';
+import { getDashboardStats } from '../services/api';
+import type { DashboardStats } from '../services/api';
+
+const Dashboard = () => {
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getDashboardStats()
+      .then((data) => {
+        setStats(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("خطا در دریافت اطلاعات داشبورد:", err);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) return <div className="page-container">در حال بارگذاری...</div>;
+  if (!stats) return <div className="page-container">خطا در بارگذاری اطلاعات</div>;
+
+  return (
+    <div className="page-container">
+      <h1>داشبورد مدیریت</h1>
+      <p style={{ color: '#64748b', marginBottom: '20px' }}>خلاصه وضعیت سیستم فاکتورهای شما</p>
+      
+      <div className="dashboard-grid">
+        <div className="stat-card">
+          <h3>تعداد کل فاکتورها</h3>
+          <div className="value">{stats.totalInvoices.toLocaleString('fa-IR')}</div>
+        </div>
+
+        <div className="stat-card">
+          <h3>مجموع فروش کل (ریال)</h3>
+          <div className="value">{stats.totalRevenue.toLocaleString('fa-IR')}</div>
+        </div>
+
+        <div className="stat-card">
+          <h3>فاکتورهای امروز</h3>
+          <div className="value">{stats.todayInvoices.toLocaleString('fa-IR')}</div>
+        </div>
+
+        <div className="stat-card">
+          <h3>فروش امروز (ریال)</h3>
+          <div className="value">{stats.todayRevenue.toLocaleString('fa-IR')}</div>
+        </div>
+
+        <div className="stat-card">
+          <h3>مشتریان فعال</h3>
+          <div className="value">{stats.totalCustomers.toLocaleString('fa-IR')}</div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Dashboard;
+
+==================================================
+FILE: ui/src/pages/InvoiceList.tsx
+==================================================
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import type { FormEvent } from 'react';
+
+import DatePickerModule from 'react-multi-date-picker';
+import persian from 'react-date-object/calendars/persian';
+import persian_fa from 'react-date-object/locales/persian_fa';
+import gregorian from 'react-date-object/calendars/gregorian';
+import DateObject from 'react-date-object';
+
+import type { Invoice } from '../types/invoice';
+import {
+  getInvoices,
+  getTodaySummary,
+} from '../services/api';
+
+const DatePickerComponent =
+  (DatePickerModule as any).default ?? DatePickerModule;
+
+interface TodaySummary {
+  date: string;
+  jalaliDate: string;
+  invoiceCount: number;
+  totalAmount: number;
+}
+
+// تبدیل تاریخ میلادی API به شمسی، بدون جابه‌جایی روز بر اثر timezone
+const formatToJalali = (dateString: string) => {
+  if (!dateString) return '-';
+
+  try {
+    const [datePart] = dateString.split('T');
+    const [year, month, day] = datePart.split('-').map(Number);
+
+    if (!year || !month || !day) return '-';
+
+    const date = new Date(Date.UTC(year, month - 1, day));
+
+    return new Intl.DateTimeFormat('fa-IR-u-ca-persian', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      timeZone: 'UTC',
+    }).format(date);
+  } catch {
+    return '-';
+  }
+};
+
+// تبدیل تاریخ شمسی انتخاب‌شده به میلادی برای API
+const convertToApiDate = (date: DateObject | null) => {
+  if (!date) return undefined;
+
+  const gregorianDate = date.convert(gregorian);
+
+  return gregorianDate
+    .format('YYYY-MM-DD')
+    .replace(/[۰-۹]/g, (digit) =>
+      String('۰۱۲۳۴۵۶۷۸۹'.indexOf(digit))
+    )
+    .replace(/[٠-٩]/g, (digit) =>
+      String('٠١٢٣٤٥٦٧٨٩'.indexOf(digit))
+    );
+};
+
+const formatAmount = (amount: number | undefined) =>
+  (amount ?? 0).toLocaleString('fa-IR');
+
+const InvoiceList = () => {
+  const navigate = useNavigate();
+
+  // اطلاعات جدول
+  const [invoices, setInvoices] = useState<Invoice[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [errorMsg, setErrorMsg] = useState('');
+
+  // آمار امروز
+  const [todaySummary, setTodaySummary] =
+    useState<TodaySummary | null>(null);
+  const [summaryLoading, setSummaryLoading] = useState(true);
+  const [summaryError, setSummaryError] = useState('');
+
+  // صفحه‌بندی
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
+  const [totalCount, setTotalCount] = useState(0);
+
+  // وضعیت باز و بسته بودن فیلتر پیشرفته
+  const [advancedFilterOpen, setAdvancedFilterOpen] = useState(false);
+
+  // مقادیر واردشده در فرم فیلتر
+  const [startDate, setStartDate] = useState<DateObject | null>(null);
+  const [endDate, setEndDate] = useState<DateObject | null>(null);
+  const [buyerName, setBuyerName] = useState('');
+  const [minAmount, setMinAmount] = useState('');
+  const [maxAmount, setMaxAmount] = useState('');
+
+  // مقادیر اعمال‌شده برای جستجو
+  const [filterStartDate, setFilterStartDate] =
+    useState<DateObject | null>(null);
+  const [filterEndDate, setFilterEndDate] =
+    useState<DateObject | null>(null);
+  const [filterBuyerName, setFilterBuyerName] = useState('');
+  const [filterMinAmount, setFilterMinAmount] = useState('');
+  const [filterMaxAmount, setFilterMaxAmount] = useState('');
+
+  const totalPages = Math.ceil(totalCount / pageSize);
+
+  // دریافت مستقل آمار امروز
+  useEffect(() => {
+    let cancelled = false;
+
+    const fetchTodaySummary = async () => {
+      setSummaryLoading(true);
+      setSummaryError('');
+
+      try {
+        const data = await getTodaySummary();
+
+        if (!cancelled) {
+          setTodaySummary(data);
+        }
+      } catch (error) {
+        console.error('خطا در دریافت آمار امروز:', error);
+
+        if (!cancelled) {
+          setSummaryError('دریافت آمار امروز با خطا مواجه شد.');
+          setTodaySummary(null);
+        }
+      } finally {
+        if (!cancelled) {
+          setSummaryLoading(false);
+        }
+      }
+    };
+
+    fetchTodaySummary();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // دریافت فاکتورها
+  useEffect(() => {
+    let cancelled = false;
+
+    const fetchInvoices = async () => {
+      setLoading(true);
+      setErrorMsg('');
+
+      try {
+        const apiStartDate = convertToApiDate(filterStartDate);
+        const apiEndDate = convertToApiDate(filterEndDate);
+
+        const data = await getInvoices(
+          page,
+          pageSize,
+          apiStartDate,
+          apiEndDate,
+          filterBuyerName || undefined,
+          filterMinAmount ? Number(filterMinAmount) : undefined,
+          filterMaxAmount ? Number(filterMaxAmount) : undefined
+        );
+
+        if (cancelled) return;
+
+        setInvoices(data?.items ?? []);
+        setTotalCount(data?.totalCount ?? 0);
+      } catch (error: any) {
+        if (cancelled) return;
+
+        console.error('خطای دریافت فاکتورها:', error);
+        console.error('Server Response:', error.response?.data);
+
+        setErrorMsg(
+          error.response?.data?.title ||
+          error.response?.data?.message ||
+          error.message ||
+          'خطا در دریافت فاکتورها.'
+        );
+
+        setInvoices([]);
+        setTotalCount(0);
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchInvoices();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    page,
+    pageSize,
+    filterStartDate,
+    filterEndDate,
+    filterBuyerName,
+    filterMinAmount,
+    filterMaxAmount,
+  ]);
+
+  // اعمال فیلترها
+  const handleSearch = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (startDate && endDate && startDate.toJulianDay() > endDate.toJulianDay()) {
+      setErrorMsg('تاریخ شروع نمی‌تواند بعد از تاریخ پایان باشد.');
+      return;
+    }
+
+    const min = minAmount.trim() ? Number(minAmount) : undefined;
+    const max = maxAmount.trim() ? Number(maxAmount) : undefined;
+
+    if (min !== undefined && (!Number.isFinite(min) || min < 0)) {
+      setErrorMsg('حداقل مبلغ معتبر نیست.');
+      return;
+    }
+
+    if (max !== undefined && (!Number.isFinite(max) || max < 0)) {
+      setErrorMsg('حداکثر مبلغ معتبر نیست.');
+      return;
+    }
+
+    if (min !== undefined && max !== undefined && min > max) {
+      setErrorMsg('حداقل مبلغ نمی‌تواند بیشتر از حداکثر مبلغ باشد.');
+      return;
+    }
+
+    setErrorMsg('');
+    setPage(1);
+
+    setFilterStartDate(startDate);
+    setFilterEndDate(endDate);
+    setFilterBuyerName(buyerName.trim());
+    setFilterMinAmount(minAmount.trim());
+    setFilterMaxAmount(maxAmount.trim());
+  };
+
+  // حذف تمام فیلترها
+  const clearFilters = () => {
+    setStartDate(null);
+    setEndDate(null);
+    setBuyerName('');
+    setMinAmount('');
+    setMaxAmount('');
+
+    setFilterStartDate(null);
+    setFilterEndDate(null);
+    setFilterBuyerName('');
+    setFilterMinAmount('');
+    setFilterMaxAmount('');
+
+    setErrorMsg('');
+    setPage(1);
+  };
+
+  const hasActiveFilters =
+    filterStartDate !== null ||
+    filterEndDate !== null ||
+    filterBuyerName !== '' ||
+    filterMinAmount !== '' ||
+    filterMaxAmount !== '';
+
+  return (
+    <div className="page-container invoice-list-page">
+
+      {/* عنوان صفحه */}
+      <div className="list-header invoice-list-header">
+        <div>
+          <h2>لیست فاکتورهای صادرشده</h2>
+          <p className="page-subtitle">
+            مشاهده، جستجو و مدیریت فاکتورهای صادرشده
+          </p>
+        </div>
+
+        <button
+          type="button"
+          className="btn-primary"
+          onClick={() => navigate('/invoices/new')}
+        >
+          <span>+</span>
+          صدور فاکتور جدید
+        </button>
+      </div>
+
+      {/* خلاصه عملکرد امروز */}
+      <section className="today-summary">
+
+        <div className="summary-heading">
+          <div>
+            <h3>خلاصه عملکرد امروز</h3>
+
+            <p>
+              {todaySummary?.jalaliDate
+                ? `امروز ${todaySummary.jalaliDate}`
+                : 'آمار روز جاری'}
+            </p>
+          </div>
+
+          <span className="summary-date-icon">◷</span>
+        </div>
+
+        {summaryLoading ? (
+          <div className="summary-loading">
+            در حال دریافت آمار امروز...
+          </div>
+        ) : summaryError ? (
+          <div className="summary-error">
+            {summaryError}
+          </div>
+        ) : (
+          <div className="summary-cards">
+
+            <div className="summary-card">
+              <div className="summary-card-icon invoice-count-icon">
+                <span>▤</span>
+              </div>
+
+              <div className="summary-card-content">
+                <span className="summary-label">
+                  تعداد فاکتورهای امروز
+                </span>
+
+                <strong>
+                  {formatAmount(todaySummary?.invoiceCount)}
+                </strong>
+
+                <small>فاکتور صادرشده</small>
+              </div>
+            </div>
+
+            <div className="summary-card">
+              <div className="summary-card-icon invoice-amount-icon">
+                <span>◈</span>
+              </div>
+
+              <div className="summary-card-content">
+                <span className="summary-label">
+                  مجموع مبلغ فاکتورهای امروز
+                </span>
+
+                <strong>
+                  {formatAmount(todaySummary?.totalAmount)}
+                </strong>
+
+                <small>ریال</small>
+              </div>
+            </div>
+
+          </div>
+        )}
+
+        {!summaryLoading &&
+          !summaryError &&
+          todaySummary?.invoiceCount === 0 && (
+            <div className="summary-empty">
+              هنوز فاکتوری برای امروز صادر نشده است.
+            </div>
+          )}
+      </section>
+
+      {/* فیلترها */}
+      <section className="invoice-filter-section">
+
+        <div className="filter-section-heading">
+          <div>
+            <h3>جستجو و فیلتر فاکتورها</h3>
+            <p>برای یافتن فاکتورهای موردنظر از فیلترها استفاده کنید.</p>
+          </div>
+
+          {hasActiveFilters && (
+            <span className="active-filter-label">
+              فیلتر فعال
+            </span>
+          )}
+        </div>
+
+        <form onSubmit={handleSearch}>
+
+          {/* فیلترهای اصلی */}
+          <div className="basic-filters">
+
+            <div className="search-group">
+              <label>از تاریخ</label>
+
+              <DatePickerComponent
+                calendar={persian}
+                locale={persian_fa}
+                calendarPosition="bottom-right"
+                format="YYYY/MM/DD"
+                value={startDate}
+                onChange={(date: DateObject | null) =>
+                  setStartDate(date)
+                }
+                placeholder="انتخاب تاریخ شروع"
+                inputClass="date-picker-input"
+              />
+            </div>
+
+            <div className="search-group">
+              <label>تا تاریخ</label>
+
+              <DatePickerComponent
+                calendar={persian}
+                locale={persian_fa}
+                calendarPosition="bottom-right"
+                format="YYYY/MM/DD"
+                value={endDate}
+                onChange={(date: DateObject | null) =>
+                  setEndDate(date)
+                }
+                placeholder="انتخاب تاریخ پایان"
+                inputClass="date-picker-input"
+                minDate={startDate || undefined}
+              />
+            </div>
+
+          </div>
+
+          {/* باز و بسته کردن فیلتر پیشرفته */}
+          <button
+            type="button"
+            className="advanced-filter-toggle"
+            onClick={() =>
+              setAdvancedFilterOpen((previous) => !previous)
+            }
+            aria-expanded={advancedFilterOpen}
+          >
+            <span className="advanced-filter-toggle-icon">
+              {advancedFilterOpen ? '−' : '+'}
+            </span>
+
+            <span>
+              {advancedFilterOpen
+                ? 'بستن فیلتر پیشرفته'
+                : 'فیلتر پیشرفته'}
+            </span>
+
+            <span className="advanced-filter-description">
+              نام خریدار و بازه مبلغ
+            </span>
+
+            <span className={`advanced-chevron ${advancedFilterOpen ? 'is-open' : ''}`}>
+              ▾
+            </span>
+          </button>
+
+          {/* فیلترهای پیشرفته */}
+          {advancedFilterOpen && (
+            <div className="advanced-filters">
+
+              <div className="search-group buyer-filter">
+                <label htmlFor="buyerName">
+                  نام خریدار
+                </label>
+
+                <input
+                  id="buyerName"
+                  type="text"
+                  value={buyerName}
+                  onChange={(event) =>
+                    setBuyerName(event.target.value)
+                  }
+                  placeholder="بخشی از نام خریدار را وارد کنید"
+                  className="filter-text-input"
+                />
+              </div>
+
+              <div className="search-group">
+                <label htmlFor="minAmount">
+                  حداقل مبلغ (ریال)
+                </label>
+
+                <input
+                  id="minAmount"
+                  type="number"
+                  min="0"
+                  value={minAmount}
+                  onChange={(event) =>
+                    setMinAmount(event.target.value)
+                  }
+                  placeholder="مثلاً ۱۰۰۰۰۰۰"
+                  className="filter-text-input"
+                />
+              </div>
+
+              <div className="search-group">
+                <label htmlFor="maxAmount">
+                  حداکثر مبلغ (ریال)
+                </label>
+
+                <input
+                  id="maxAmount"
+                  type="number"
+                  min="0"
+                  value={maxAmount}
+                  onChange={(event) =>
+                    setMaxAmount(event.target.value)
+                  }
+                  placeholder="مثلاً ۵۰۰۰۰۰۰۰"
+                  className="filter-text-input"
+                />
+              </div>
+
+            </div>
+          )}
+
+          {/* دکمه‌های عملیات فیلتر */}
+          <div className="filter-actions">
+
+            <button type="submit" className="btn-search">
+              <span>جستجو</span>
+              <span>⌕</span>
+            </button>
+
+            <button
+              type="button"
+              className="btn-clear"
+              onClick={clearFilters}
+            >
+              پاک کردن فیلترها
+              <span>×</span>
+            </button>
+
+          </div>
+
+        </form>
+      </section>
+
+      {/* پیام خطا */}
+      {errorMsg && (
+        <div className="invoice-error-message">
+          {errorMsg}
+        </div>
+      )}
+
+      {/* جدول فاکتورها */}
+      <section className="invoice-table-section">
+
+        <div className="table-section-heading">
+          <div>
+            <h3>فاکتورها</h3>
+            <p>
+              تعداد نتایج: {formatAmount(totalCount)}
+            </p>
+          </div>
+        </div>
+
+        {loading ? (
+          <div className="invoice-loading">
+            در حال دریافت فاکتورها...
+          </div>
+        ) : (
+          <>
+            <div className="table-container">
+              <table className="data-table">
+
+                <thead>
+                  <tr>
+                    <th>شماره فاکتور</th>
+                    <th>تاریخ (شمسی)</th>
+                    <th>خریدار</th>
+                    <th>مبلغ کل (ریال)</th>
+                    <th>نوع پرداخت</th>
+                    <th>عملیات</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {invoices.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className="empty-table-message">
+                        فاکتوری با مشخصات جستجو شده یافت نشد.
+                      </td>
+                    </tr>
+                  ) : (
+                    invoices.map((inv) => (
+                      <tr
+                        key={inv.id}
+                        onClick={() =>
+                          navigate(`/invoices/${inv.id}`)
+                        }
+                        className="invoice-table-row"
+                      >
+                        <td>{inv.invoiceNumber || '-'}</td>
+
+                        <td>{formatToJalali(inv.date)}</td>
+
+                        <td>{inv.buyer?.name ?? '-'}</td>
+
+                        <td className="invoice-amount-cell">
+                          {formatAmount(inv.totalAmount)}
+                        </td>
+
+                        <td>
+                          <span
+                            className={
+                              inv.paymentType === 'cash'
+                                ? 'payment-badge payment-cash'
+                                : 'payment-badge payment-noncash'
+                            }
+                          >
+                            {inv.paymentType === 'cash'
+                              ? 'نقدی'
+                              : 'غیر نقدی'}
+                          </span>
+                        </td>
+
+                        <td>
+                          <button
+                            type="button"
+                            className="invoice-view-button"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              navigate(`/invoices/${inv.id}`);
+                            }}
+                          >
+                            مشاهده
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+
+              </table>
+            </div>
+
+            {/* صفحه‌بندی */}
+            <div className="pagination invoice-pagination">
+
+              <button
+                type="button"
+                disabled={page === 1}
+                onClick={() => setPage((current) => current - 1)}
+                className="btn-page"
+              >
+                قبلی
+              </button>
+
+              <span>
+                صفحه {page.toLocaleString('fa-IR')} از{' '}
+                {(totalPages || 1).toLocaleString('fa-IR')}
+              </span>
+
+              <button
+                type="button"
+                disabled={page >= totalPages || totalPages === 0}
+                onClick={() => setPage((current) => current + 1)}
+                className="btn-page"
+              >
+                بعدی
+              </button>
+
+            </div>
+          </>
+        )}
+
+      </section>
+    </div>
+  );
+};
+
+export default InvoiceList;
+
+==================================================
+FILE: ui/src/pages/CreateInvoice.tsx
+==================================================
+// src/pages/CreateInvoice.tsx
+import React from 'react';
+import InvoiceForm from '../components/Invoice/InvoiceForm'; // کامپوننت فرم شما
+
+const CreateInvoice = () => {
+  return (
+    <div className="page-container" dir="rtl">
+      <h2>صدور فاکتور جدید</h2>
+      <InvoiceForm />
+    </div>
+  );
+};
+
+export default CreateInvoice;
+
+==================================================
+FILE: ui/src/pages/InvoiceDetail.tsx
+==================================================
+
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import InvoiceTemplate from '../components/Invoice/InvoiceTemplate';
+import { getInvoiceById } from '../services/api';
+
+interface InvoiceDetailData {
+  id: number;
+  invoiceNumber: string;
+  date: string;
+  seller: {
+    name: string;
+    economicCode?: string;
+    registrationNumber?: string;
+    nationalId?: string;
+    province?: string;
+    city?: string;
+    address?: string;
+    postalCode?: string;
+    phone?: string;
+    mobile?: string;
+  };
+  buyer: {
+    name: string;
+    economicCode?: string;
+    registrationNumber?: string;
+    nationalId?: string;
+    province?: string;
+    city?: string;
+    address?: string;
+    postalCode?: string;
+    phone?: string;
+    mobile?: string;
+  };
+  items: {
+    id?: number;
+    description: string;
+    quantity: number;
+    unitPrice: number;
+    discount: number;
+    tax: number;
+    totalPrice?: number;
+  }[];
+  totalAmount: number;
+  paymentType: string;
+  notes?: string;
+}
+
+const formatToJalali = (dateString: string) => {
+  if (!dateString) return '-';
+
+  try {
+    const datePart = dateString.split('T')[0];
+    const [year, month, day] = datePart.split('-').map(Number);
+
+    if (!year || !month || !day) return '-';
+
+    const date = new Date(Date.UTC(year, month - 1, day));
+
+    return new Intl.DateTimeFormat('fa-IR-u-ca-persian', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      timeZone: 'UTC',
+    }).format(date);
+  } catch {
+    return '-';
+  }
+};
+
+const InvoiceDetail = () => {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+
+  const [invoice, setInvoice] = useState<InvoiceDetailData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadInvoice = async () => {
+      const invoiceId = Number(id);
+
+      if (!id || !Number.isInteger(invoiceId) || invoiceId <= 0) {
+        setError('شناسه فاکتور معتبر نیست.');
+        setLoading(false);
+        return;
+      }
+
+      try {
+        setLoading(true);
+        setError('');
+
+        const data = await getInvoiceById(invoiceId);
+
+        if (isMounted) {
+          setInvoice({
+            ...data,
+            date: formatToJalali(data.date),
+          });
+        }
+      } catch (err: any) {
+        if (!isMounted) return;
+
+        if (err.response?.status === 404) {
+          setError('فاکتور مورد نظر پیدا نشد.');
+        } else {
+          setError(
+            err.response?.data?.message ||
+            'دریافت اطلاعات فاکتور با خطا مواجه شد.'
+          );
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadInvoice();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="invoice-detail-state">
+        <div className="invoice-detail-spinner" />
+        <span>در حال دریافت اطلاعات فاکتور...</span>
+      </div>
+    );
+  }
+
+  if (error || !invoice) {
+    return (
+      <div className="invoice-detail-state">
+        <div className="invoice-detail-error">
+          <span className="invoice-detail-error-icon">!</span>
+          <h3>امکان نمایش فاکتور وجود ندارد</h3>
+          <p>{error || 'اطلاعات فاکتور در دسترس نیست.'}</p>
+
+          <button
+            className="invoice-detail-back"
+            onClick={() => navigate('/invoices')}
+          >
+            بازگشت به لیست فاکتورها
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <main className="invoice-detail-page">
+      <header className="invoice-detail-header no-print">
+        <div className="invoice-detail-heading">
+          <button
+            className="invoice-detail-back"
+            onClick={() => navigate('/invoices')}
+          >
+            <span>→</span>
+            بازگشت به فاکتورها
+          </button>
+
+          <div>
+            <h1>جزئیات فاکتور</h1>
+            <p>
+              شماره فاکتور: <strong>{invoice.invoiceNumber || invoice.id}</strong>
+            </p>
+          </div>
+        </div>
+
+        <button
+          className="invoice-detail-print"
+          onClick={() => window.print()}
+        >
+          <span>▤</span>
+          چاپ فاکتور
+        </button>
+      </header>
+
+      <section className="invoice-detail-document">
+        <InvoiceTemplate invoice={invoice as any} />
+      </section>
+    </main>
+  );
+};
+
+export default InvoiceDetail;
+
+
+==================================================
+FILE: Api/Program.cs
+==================================================
+using Api.BackgroundServices;
+using Api.Data;
+using Api.Services.AmountToWords;
+using Api.Services.Invoice;
+using Api.Services.Pdf;
+using Api.Services.Sms;
+using Api.Storage;
+using Microsoft.EntityFrameworkCore;
+using Scalar.AspNetCore;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// ۱. افزودن سرویس‌های کنترلرها
+builder.Services.AddControllers();
+
+/// ۲. پیکربندی دیتابیس SQLite
+var dataDirectory = Path.Combine(builder.Environment.ContentRootPath, "data");
+if (!Directory.Exists(dataDirectory))
+{
+    Directory.CreateDirectory(dataDirectory); // ساخت پوشه در صورت عدم وجود
+}
+
+var dbPath = Path.Combine(dataDirectory, "invoices.db");
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlite($"Data Source={dbPath}"));
+
+// ۳. پیکربندی CORS برای اجازه دادن به فرانت‌اند React
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:5173", "http://localhost:3000") // آدرس‌های React
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
+
+// ۴. افزودن سرویس‌های OpenAPI (همان کد قبلی شما)
+builder.Services.AddOpenApi();
+
+
+builder.Services.AddSingleton<IAmountToWords, PersianAmountToWords>();
+
+builder.Services.AddScoped<InvoiceIssuingService>();
+
+builder.Services.AddScoped<IInvoicePdfGenerator, InvoicePdfGenerator>();
+
+builder.Services.AddSingleton<InvoiceFileStorage>();
+
+builder.Services.AddHttpClient<ISmsSender, SmsSender>();
+
+builder.Services.AddHostedService<InvoiceOutboxWorker>();
+
+var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    dbContext.Database.Migrate(); // اعمال مایگریشن‌های دات‌نت
+}
+
+// ۵. پیکربندی خط لوله درخواست‌ها (Middleware Pipeline)
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi(); // فعال‌سازی endpoint تولید مستندات OpenAPI
+
+    // (اختیاری) برای استفاده از Swagger UI جهت تست راحت‌تر API
+    // برای فعال‌سازی، پکیج Swashbuckle.AspNetCore.SwaggerUi را نصب کنید
+    app.MapScalarApiReference(options =>
+ {
+     options
+         .WithTitle("API سیستم فاکتور من") // عنوان دلخواه
+         .WithClassicLayout()           // استفاده از چیدمان کلاسیک
+         .ForceDarkMode()               // اجبار به حالت تاریک
+         .ExpandAllTags()               // باز کردن همه تگ‌ها به صورت پیش‌فرض
+         .SortTagsAlphabetically();     // مرتب‌سازی الفبایی تگ‌ها
+ });
+}
+
+//app.UseHttpsRedirection();
+
+// ۶. فعال‌سازی CORS (باید قبل از UseAuthorization و MapControllers باشد)
+app.UseCors("AllowReactApp");
+
+// ۷. فعال‌سازی مسیریابی کنترلرها
+app.MapControllers();
+
+app.Run();
+
+==================================================
+FILE: Api/Controllers/DashboardController.cs
+==================================================
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Api.Data;
+using Api.DTOs;
+
+namespace Api.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class DashboardController : ControllerBase
+    {
+        private readonly AppDbContext _context;
+
+        public DashboardController(AppDbContext context) => _context = context;
+
+        [HttpGet("stats")]
+        public async Task<IActionResult> GetStats()
+        {
+            var today = DateTime.Today;
+            var tomorrow = today.AddDays(1);
+
+            // ۱. تعداد کل فاکتورها
+            var totalInvoices = await _context.Invoices.CountAsync();
+
+            // ۲. تعداد فاکتورهای امروز
+            var todayInvoices = await _context.Invoices
+                .CountAsync(i => i.Date >= today && i.Date < tomorrow);
+
+            // ۳. مجموع فروش کل (با استفاده از آیتم‌ها و فرمول محاسبه TotalPrice)
+            var totalRevenue = await _context.InvoiceItems
+                .SumAsync(item => (decimal?)((item.Quantity * item.UnitPrice) - item.Discount + item.Tax)) ?? 0;
+
+            // ۴. فروش امروز
+            var todayRevenue = await _context.Invoices
+                .Where(i => i.Date >= today && i.Date < tomorrow)
+                .SelectMany(i => i.Items)
+                .SumAsync(item => (decimal?)((item.Quantity * item.UnitPrice) - item.Discount + item.Tax)) ?? 0;
+
+            // ۵. تعداد مشتریان یکتا (بر اساس BuyerId)
+            var totalCustomers = await _context.Invoices
+                .Select(i => i.BuyerId)
+                .Distinct()
+                .CountAsync();
+
+            var stats = new DashboardStatsDto
+            {
+                TotalInvoices = totalInvoices,
+                TotalRevenue = totalRevenue,
+                TodayInvoices = todayInvoices,
+                TodayRevenue = todayRevenue,
+                TotalCustomers = totalCustomers
+            };
+
+            return Ok(stats);
+        }
+    }
+}
+
+==================================================
+FILE: Api/Controllers/InvoiceController.cs
+==================================================
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Api.Data;
+using Api.Models;
+using Api.DTOs;
+using System.Globalization;
+using Api.Services.Invoice;
+
+namespace Api.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class InvoicesController : ControllerBase
+    {
+        private readonly AppDbContext _context;
+        private readonly InvoiceIssuingService _invoiceIssuingService;
+
+        public InvoicesController(AppDbContext context, InvoiceIssuingService invoiceIssuingService)
+        {
+            _context = context;
+            _invoiceIssuingService = invoiceIssuingService;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetInvoices(
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10,
+            [FromQuery] DateTime? startDate = null,
+            [FromQuery] DateTime? endDate = null,
+            [FromQuery] string? buyerName = null,
+            [FromQuery] decimal? minAmount = null,
+            [FromQuery] decimal? maxAmount = null)
+        {
+            ///
+            /// temp
+            ///
+            Console.WriteLine($"Received EndDate: {endDate:yyyy-MM-dd HH:mm:ss}");
+
+
+            var query = _context.Invoices
+                .Include(i => i.Seller)
+                .Include(i => i.Buyer)
+                .Include(i => i.Items)
+                .AsQueryable();
+
+            /// temp
+            var invoiceDates = await _context.Invoices
+                .OrderBy(i => i.Date)
+                .Select(i => new { i.Id, i.Date })
+                .ToListAsync();
+
+            foreach (var invoice in invoiceDates)
+            {
+                Console.WriteLine(
+                    $"Invoice: {invoice.Id} | Date: {invoice.Date:yyyy-MM-dd HH:mm:ss}"
+                );
+            }
+            ///
+            // ۱. اعمال فیلتر تاریخ (اگر کاربر تاریخی انتخاب کرده باشد)
+            if (startDate.HasValue)
+            {
+                var start = startDate.Value.Date;
+                query = query.Where(i => i.Date >= start);
+            }
+
+            if (endDate.HasValue)
+            {
+                var endExclusive = endDate.Value.Date.AddDays(1);
+                query = query.Where(i => i.Date < endExclusive);
+            }
+            // فیلتر نام خریدار
+            if (!string.IsNullOrWhiteSpace(buyerName))
+            {
+                var searchName = buyerName.Trim();
+
+                query = query.Where(i =>
+                    i.Buyer!.Name.Contains(searchName)
+                );
+            }
+
+            // فیلتر حداقل مبلغ
+            if (minAmount.HasValue)
+            {
+                query = query.Where(i =>
+                    i.Items.Sum(item =>
+                        (item.Quantity * item.UnitPrice)
+                        - item.Discount
+                        + item.Tax
+                    ) >= minAmount.Value
+                );
+            }
+
+            // فیلتر حداکثر مبلغ
+            if (maxAmount.HasValue)
+            {
+                query = query.Where(i =>
+                    i.Items.Sum(item =>
+                        (item.Quantity * item.UnitPrice)
+                        - item.Discount
+                        + item.Tax
+                    ) <= maxAmount.Value
+                );
+            }
+            // ۲. محاسبه کل رکوردها قبل از صفحه‌بندی
+            var totalCount = await query.CountAsync();
+
+            // ۳. اعمال صفحه‌بندی و مرتب‌سازی
+            var invoices = await query
+                .OrderByDescending(i => i.Date)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            var result = new PagedResultDto<Invoice>
+            {
+                TotalCount = totalCount,
+                PageNumber = page,
+                PageSize = pageSize,
+                Items = invoices
+            };
+
+            return Ok(result);
+        }
+
+
+
+        [HttpGet("{id:int}")]
+        public async Task<IActionResult> GetInvoiceById(
+            int id,
+            CancellationToken cancellationToken)
+        {
+            var invoice = await _context.Invoices
+                .AsNoTracking()
+                .Include(i => i.Seller)
+                .Include(i => i.Buyer)
+                .Include(i => i.Items)
+                .FirstOrDefaultAsync(
+                    i => i.Id == id,
+                    cancellationToken
+                );
+
+            if (invoice is null)
+                return NotFound(new
+                {
+                    message = "فاکتور مورد نظر پیدا نشد."
+                });
+
+            return Ok(invoice);
+        }
+
+
+        [HttpGet("today-summary")]
+        public async Task<IActionResult> GetTodaySummary()
+        {
+            // منطقه زمانی کسب‌وکار: تهران
+            var tehranTimeZone = GetTehranTimeZone();
+
+            // تاریخ و ساعت فعلی تهران
+            var tehranNow = TimeZoneInfo.ConvertTimeFromUtc(
+                DateTime.UtcNow,
+                tehranTimeZone
+            );
+
+            // ابتدای امروز و ابتدای فردا
+            var startOfDay = DateTime.SpecifyKind(
+                tehranNow.Date,
+                DateTimeKind.Unspecified
+            );
+
+            var endOfDay = startOfDay.AddDays(1);
+
+            // فاکتورهای امروز
+            var todayInvoices = _context.Invoices
+                .AsNoTracking()
+                .Where(i =>
+                    i.Date >= startOfDay &&
+                    i.Date < endOfDay
+                );
+
+            // تعداد فاکتورهای امروز
+            var invoiceCount = await todayInvoices.CountAsync();
+
+            // مجموع مبلغ اقلام فاکتورهای امروز
+            // معادل TotalAmount در مدل Invoice
+            var totalAmount = await todayInvoices
+                .SelectMany(i => i.Items)
+                .SumAsync(item =>
+                    (item.Quantity * item.UnitPrice)
+                    - item.Discount
+                    + item.Tax
+                );
+
+            // تبدیل تاریخ میلادی به شمسی
+            var persianCalendar = new PersianCalendar();
+
+            var jalaliDate = string.Format(
+                "{0:0000}/{1:00}/{2:00}",
+                persianCalendar.GetYear(tehranNow),
+                persianCalendar.GetMonth(tehranNow),
+                persianCalendar.GetDayOfMonth(tehranNow)
+            );
+
+            return Ok(new
+            {
+                Date = startOfDay.ToString("yyyy-MM-dd"),
+                JalaliDate = jalaliDate,
+                InvoiceCount = invoiceCount,
+                TotalAmount = totalAmount
+            });
+        }
+
+        // دریافت منطقه زمانی تهران در ویندوز و لینوکس
+        private static TimeZoneInfo GetTehranTimeZone()
+        {
+            try
+            {
+                return TimeZoneInfo.FindSystemTimeZoneById("Asia/Tehran");
+            }
+            catch (TimeZoneNotFoundException)
+            {
+                return TimeZoneInfo.FindSystemTimeZoneById(
+                    "Iran Standard Time"
+                );
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> CreateInvoice(
+    [FromBody] Invoice invoice,
+    CancellationToken cancellationToken)
+        {
+            await using var transaction =
+                await _context.Database.BeginTransactionAsync(
+                    cancellationToken
+                );
+
+            try
+            {
+                if (invoice.Date == default)
+                {
+                    invoice.Date = TimeZoneInfo.ConvertTimeFromUtc(
+                        DateTime.UtcNow,
+                        GetTehranTimeZone()
+                    );
+                }
+
+                // مدیریت فروشنده
+                if (invoice.Seller != null && invoice.Seller.Id == 0)
+                {
+                    _context.Parties.Add(invoice.Seller);
+
+                    await _context.SaveChangesAsync(cancellationToken);
+
+                    invoice.SellerId = invoice.Seller.Id;
+                }
+                else if (invoice.Seller != null)
+                {
+                    invoice.SellerId = invoice.Seller.Id;
+                }
+
+                invoice.Seller = null;
+
+                // مدیریت خریدار
+                if (invoice.Buyer != null && invoice.Buyer.Id == 0)
+                {
+                    _context.Parties.Add(invoice.Buyer);
+
+                    await _context.SaveChangesAsync(cancellationToken);
+
+                    invoice.BuyerId = invoice.Buyer.Id;
+                }
+                else if (invoice.Buyer != null)
+                {
+                    invoice.BuyerId = invoice.Buyer.Id;
+                }
+
+                invoice.Buyer = null;
+
+                // ثبت فاکتور
+                _context.Invoices.Add(invoice);
+
+                await _context.SaveChangesAsync(cancellationToken);
+
+                // ثبت عملیات صدور در Outbox
+                await _invoiceIssuingService.EnqueueAsync(
+                    invoice.Id,
+                    cancellationToken
+                );
+
+                // ذخیره پیام Outbox
+                await _context.SaveChangesAsync(cancellationToken);
+
+                // تأیید نهایی تمام عملیات
+                await transaction.CommitAsync(cancellationToken);
+
+                return Ok(new
+                {
+                    Message = "فاکتور با موفقیت ذخیره شد",
+                    InvoiceId = invoice.Id
+                });
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync(
+                    CancellationToken.None
+                );
+
+                return BadRequest(new
+                {
+                    Message = "خطا در ذخیره‌سازی فاکتور",
+                    Error = ex.Message,
+                    InnerError = ex.InnerException?.Message
+                });
+            }
+        }
+    }
+}
+
+==================================================
+FILE: Api/Controllers/PublicInvoicesController.cs
+==================================================
+using Api.Data;
+using Api.Storage;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Api.Services.Invoice;
+
+namespace Api.Controllers;
+
+[ApiController]
+[Route("i")]
+public class PublicInvoicesController : ControllerBase
+{
+    private readonly AppDbContext _context;
+    private readonly InvoiceFileStorage _storage;
+
+    public PublicInvoicesController(
+        AppDbContext context,
+        InvoiceFileStorage storage)
+    {
+        _context = context;
+        _storage = storage;
+    }
+
+    [HttpGet("{token}")]
+    public async Task<IActionResult> ViewInvoice(
+        string token,
+        CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(token) || token.Length != 64)
+            return NotFound();
+
+        var tokenHash = InvoiceIssuingService.HashToken(token);
+
+        var document = await _context.InvoiceDocuments
+            .AsNoTracking()
+            .FirstOrDefaultAsync(
+                x =>
+                    x.AccessTokenHash == tokenHash &&
+                    x.IsActive &&
+                    (x.ExpiresAt == null ||
+                     x.ExpiresAt > DateTime.UtcNow),
+                cancellationToken
+            );
+
+        if (document is null)
+            return NotFound("لینک فاکتور معتبر نیست یا منقضی شده است.");
+
+        var file = await _storage.ReadAsync(
+            document.FilePath,
+            cancellationToken
+        );
+
+        if (file is null)
+            return NotFound("فایل فاکتور پیدا نشد.");
+
+        Response.Headers.CacheControl = "no-store";
+        Response.Headers["X-Content-Type-Options"] = "nosniff";
+
+        return File(
+            file,
+            "application/pdf",
+            $"Invoice-{document.InvoiceId}.pdf"
+        );
+    }
+}
+
+==================================================
+FILE: Api/DTOs/DashboardStatsDto.cs
+==================================================
+namespace Api.DTOs
+{
+    public class DashboardStatsDto
+    {
+        public int TotalInvoices { get; set; } // تعداد کل فاکتورها
+        public decimal TotalRevenue { get; set; } // مجموع فروش کل (ریال)
+        public int TodayInvoices { get; set; } // تعداد فاکتورهای امروز
+        public decimal TodayRevenue { get; set; } // فروش امروز (ریال)
+        public int TotalCustomers { get; set; } // تعداد مشتریان (خریداران) یکتا
+    }
+}
+
+==================================================
+FILE: Api/DTOs/PagedResultDto.cs
+==================================================
+namespace Api.DTOs
+{
+    public class PagedResultDto<T>
+    {
+        public int TotalCount { get; set; } // کل رکوردها
+        public int PageNumber { get; set; } // صفحه فعلی
+        public int PageSize { get; set; } // تعداد در هر صفحه
+        public List<T> Items { get; set; } = new();
+    }
+}
+
+==================================================
+FILE: Api/Models/Invoice.cs
+==================================================
+namespace Api.Models;
+// 1. مدل طرفین (فروشنده و خریدار)
+
+
+
+
+// 3. مدل خود فاکتور
+public class Invoice
+{
+    public int Id { get; set; }
+    public string InvoiceNumber { get; set; }  = string.Empty;
+    public DateTime Date { get; set; } // تاریخ
+    
+    public int SellerId { get; set; }
+    public Party? Seller { get; set; } // مشخصات فروشنده
+    
+    public int BuyerId { get; set; }
+    public Party? Buyer { get; set; } // مشخصات خریدار
+    
+    public List<InvoiceItem> Items { get; set; } = new(); // لیست کالاها
+    
+    public decimal TotalAmount => Items.Sum(i => i.TotalPrice); // جمع کل قابل پرداخت
+    public string PaymentType { get; set; }  = string.Empty;// نقدی / غیر نقدی
+    public string Notes { get; set; } = string.Empty; // توضیحات
+}
+
+==================================================
+FILE: Api/Models/InvoiceItem.cs
+==================================================
+namespace Api.Models;
+// 1. مدل طرفین (فروشنده و خریدار)
+
+
+// 2. مدل اقلام فاکتور
+public class InvoiceItem
+{
+    public int Id { get; set; }
+    public string Description { get; set; } = string.Empty; // شرح کالا یا خدمات
+    public int Quantity { get; set; } // تعداد
+    public decimal UnitPrice { get; set; } // مبلغ واحد
+    public decimal Discount { get; set; } // تخفیف
+    public decimal Tax { get; set; } // مالیات
+    public decimal TotalPrice => (Quantity * UnitPrice) - Discount + Tax; // جمع کل
+}
+
+==================================================
+FILE: Api/Models/Party.cs
+==================================================
+namespace Api.Models;
+// 1. مدل طرفین (فروشنده و خریدار)
+
+public class Party
+{
+    public int Id { get; set; }
+    public string Name { get; set; } // نام شخص حقیقی/حقوقی
+    public string EconomicCode { get; set; } // شماره اقتصادی
+    public string RegistrationNumber { get; set; } // شماره ثبت
+    public string NationalId { get; set; } // شماره ملی
+    public string Province { get; set; } // استان
+    public string City { get; set; } // شهر
+    public string Address { get; set; } // نشانی کامل
+    public string PostalCode { get; set; } // کد پستی
+    public string Phone { get; set; } // تلفن
+    public string Mobile { get; set; } // همراه
+}
+
+
+==================================================
+FILE: Api/Models/CompanyProfile.cs
+==================================================
+namespace Api.Models;
+
+public class CompanyProfile
+{
+    public int Id { get; set; }
+
+    public string Name { get; set; } = string.Empty;
+
+    public string? EconomicCode { get; set; }
+    public string? NationalId { get; set; }
+    public string? RegistrationNumber { get; set; }
+
+    public string? Province { get; set; }
+    public string? City { get; set; }
+    public string? Address { get; set; }
+    public string? PostalCode { get; set; }
+
+    public string? Phone { get; set; }
+    public string? Mobile { get; set; }
+
+    // مسیر نسبی فایل‌ها در فضای ذخیره‌سازی خصوصی
+    public string? LogoPath { get; set; }
+    public string? StampPath { get; set; }
+    public string? SignaturePath { get; set; }
+
+    public int? DefaultBankAccountId { get; set; }
+    public BankAccount? DefaultBankAccount { get; set; }
+
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime? UpdatedAt { get; set; }
+}
+
+==================================================
+FILE: Api/Models/BankAccount.cs
+==================================================
+namespace Api.Models;
+
+public class BankAccount
+{
+    public int Id { get; set; }
+
+    public string BankName { get; set; } = string.Empty;
+    public string? AccountHolder { get; set; }
+
+    public string? AccountNumber { get; set; }
+    public string? ShebaNumber { get; set; }
+    public string? CardNumber { get; set; }
+
+    public bool IsDefault { get; set; }
+    public bool IsActive { get; set; } = true;
+
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+}
+
+==================================================
+FILE: Api/Models/InvoiceDocument.cs
+==================================================
+namespace Api.Models;
+
+public class InvoiceDocument
+{
+    public int Id { get; set; }
+
+    public int InvoiceId { get; set; }
+    public Invoice Invoice { get; set; } = null!;
+
+    public string FilePath { get; set; } = string.Empty;
+    public string FileHash { get; set; } = string.Empty;
+
+    // فقط Hash توکن در دیتابیس ذخیره می‌شود.
+    public string AccessTokenHash { get; set; } = string.Empty;
+
+    public DateTime GeneratedAt { get; set; } = DateTime.UtcNow;
+    public DateTime? ExpiresAt { get; set; }
+
+    public bool IsActive { get; set; } = true;
+}
+
+==================================================
+FILE: Api/Models/InvoiceSmsLog.cs
+==================================================
+namespace Api.Models;
+
+public class InvoiceSmsLog
+{
+    public int Id { get; set; }
+
+    public int InvoiceId { get; set; }
+
+    public string Mobile { get; set; } = string.Empty;
+    public string Message { get; set; } = string.Empty;
+
+    // Pending, Sent, Failed
+    public string Status { get; set; } = "Pending";
+
+    public string? ProviderMessageId { get; set; }
+    public string? ErrorMessage { get; set; }
+
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime? SentAt { get; set; }
+}
