@@ -6,7 +6,7 @@ namespace Api.Models;
 public class InvoiceItem
 {
     public int Id { get; set; }
-    public string Description { get; set; } // شرح کالا یا خدمات
+    public string Description { get; set; } = string.Empty; // شرح کالا یا خدمات
     public int Quantity { get; set; } // تعداد
     public decimal UnitPrice { get; set; } // مبلغ واحد
     public decimal Discount { get; set; } // تخفیف

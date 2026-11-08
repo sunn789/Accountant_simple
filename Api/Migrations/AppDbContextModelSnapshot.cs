@@ -17,6 +17,107 @@ namespace Api.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.14");
 
+            modelBuilder.Entity("Api.Models.BankAccount", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("AccountHolder")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("AccountNumber")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("BankName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CardNumber")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsDefault")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ShebaNumber")
+                        .HasMaxLength(26)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BankAccounts");
+                });
+
+            modelBuilder.Entity("Api.Models.CompanyProfile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Address")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("City")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("DefaultBankAccountId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("EconomicCode")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("LogoPath")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Mobile")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("NationalId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PostalCode")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Province")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("RegistrationNumber")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("SignaturePath")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("StampPath")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DefaultBankAccountId");
+
+                    b.ToTable("CompanyProfiles");
+                });
+
             modelBuilder.Entity("Api.Models.Invoice", b =>
                 {
                     b.Property<int>("Id")
@@ -53,6 +154,49 @@ namespace Api.Migrations
                     b.ToTable("Invoices");
                 });
 
+            modelBuilder.Entity("Api.Models.InvoiceDocument", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("AccessTokenHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("ExpiresAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("FileHash")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("GeneratedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("InvoiceId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccessTokenHash")
+                        .IsUnique();
+
+                    b.HasIndex("InvoiceId")
+                        .IsUnique();
+
+                    b.ToTable("InvoiceDocuments");
+                });
+
             modelBuilder.Entity("Api.Models.InvoiceItem", b =>
                 {
                     b.Property<int>("Id")
@@ -83,6 +227,96 @@ namespace Api.Migrations
                     b.HasIndex("InvoiceId");
 
                     b.ToTable("InvoiceItems");
+                });
+
+            modelBuilder.Entity("Api.Models.InvoiceSmsLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ErrorMessage")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("InvoiceId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Mobile")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ProviderMessageId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("SentAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InvoiceId");
+
+                    b.ToTable("InvoiceSmsLogs");
+                });
+
+            modelBuilder.Entity("Api.Models.OutboxMessage", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("LastError")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("NextAttemptAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Payload")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("ProcessedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("RelatedEntityId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("RetryCount")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Status", "NextAttemptAt");
+
+                    b.HasIndex("Type", "RelatedEntityId")
+                        .IsUnique()
+                        .HasDatabaseName("UX_OutboxMessages_Type_RelatedEntityId")
+                        .HasFilter("\"RelatedEntityId\" IS NOT NULL");
+
+                    b.ToTable("OutboxMessages");
                 });
 
             modelBuilder.Entity("Api.Models.Party", b =>
@@ -136,6 +370,16 @@ namespace Api.Migrations
                     b.ToTable("Parties");
                 });
 
+            modelBuilder.Entity("Api.Models.CompanyProfile", b =>
+                {
+                    b.HasOne("Api.Models.BankAccount", "DefaultBankAccount")
+                        .WithMany()
+                        .HasForeignKey("DefaultBankAccountId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("DefaultBankAccount");
+                });
+
             modelBuilder.Entity("Api.Models.Invoice", b =>
                 {
                     b.HasOne("Api.Models.Party", "Buyer")
@@ -153,6 +397,17 @@ namespace Api.Migrations
                     b.Navigation("Buyer");
 
                     b.Navigation("Seller");
+                });
+
+            modelBuilder.Entity("Api.Models.InvoiceDocument", b =>
+                {
+                    b.HasOne("Api.Models.Invoice", "Invoice")
+                        .WithOne()
+                        .HasForeignKey("Api.Models.InvoiceDocument", "InvoiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Invoice");
                 });
 
             modelBuilder.Entity("Api.Models.InvoiceItem", b =>

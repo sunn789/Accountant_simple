@@ -14,4 +14,8 @@ export default defineConfig({
       },
     },
   },
+    optimizeDeps: {
+    include: ['react-multi-date-picker', 'react-date-object'],
+  },
 })
+

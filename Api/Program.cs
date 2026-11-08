@@ -1,4 +1,10 @@
+using Api.BackgroundServices;
 using Api.Data;
+using Api.Services.AmountToWords;
+using Api.Services.Invoice;
+using Api.Services.Pdf;
+using Api.Services.Sms;
+using Api.Storage;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
@@ -34,6 +40,19 @@ builder.Services.AddCors(options =>
 // ۴. افزودن سرویس‌های OpenAPI (همان کد قبلی شما)
 builder.Services.AddOpenApi();
 
+
+builder.Services.AddSingleton<IAmountToWords, PersianAmountToWords>();
+
+builder.Services.AddScoped<InvoiceIssuingService>();
+
+builder.Services.AddScoped<IInvoicePdfGenerator, InvoicePdfGenerator>();
+
+builder.Services.AddSingleton<InvoiceFileStorage>();
+
+builder.Services.AddHttpClient<ISmsSender, SmsSender>();
+
+builder.Services.AddHostedService<InvoiceOutboxWorker>();
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -46,18 +65,18 @@ using (var scope = app.Services.CreateScope())
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi(); // فعال‌سازی endpoint تولید مستندات OpenAPI
-    
+
     // (اختیاری) برای استفاده از Swagger UI جهت تست راحت‌تر API
     // برای فعال‌سازی، پکیج Swashbuckle.AspNetCore.SwaggerUi را نصب کنید
-   app.MapScalarApiReference(options =>
-{
-    options
-        .WithTitle("API سیستم فاکتور من") // عنوان دلخواه
-        .WithClassicLayout()           // استفاده از چیدمان کلاسیک
-        .ForceDarkMode()               // اجبار به حالت تاریک
-        .ExpandAllTags()               // باز کردن همه تگ‌ها به صورت پیش‌فرض
-        .SortTagsAlphabetically();     // مرتب‌سازی الفبایی تگ‌ها
-});
+    app.MapScalarApiReference(options =>
+ {
+     options
+         .WithTitle("API سیستم فاکتور من") // عنوان دلخواه
+         .WithClassicLayout()           // استفاده از چیدمان کلاسیک
+         .ForceDarkMode()               // اجبار به حالت تاریک
+         .ExpandAllTags()               // باز کردن همه تگ‌ها به صورت پیش‌فرض
+         .SortTagsAlphabetically();     // مرتب‌سازی الفبایی تگ‌ها
+ });
 }
 
 //app.UseHttpsRedirection();
